@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var dataSourceBuilder = new NpgsqlDataSourceBuilder("Host=localhost;Database=swine_sync;Username=postgres;Password=portedinme;Port=5432");
+var dataSourceBuilder = new NpgsqlDataSourceBuilder("Host=localhost;Database=swine_sync;Username=postgres;Password=1234;Port=5432");
 dataSourceBuilder.MapEnum<UserRole>();
 var db = dataSourceBuilder.Build();
 
@@ -42,6 +42,7 @@ app.MapPost("/api/users/agent", UserRoutes.AddAgent);
 app.MapPost("/api/login", LoginRoutes.LoginByRole);
 app.MapDelete("/api/login", LoginRoutes.LogOut);
 
+
 app.MapGet("/api/categories/{id}", CategoryRoutes.GetCategoriesByUserId);
 app.MapGet("/api/categories/company/", CategoryRoutes.GetCategoriesByCompany);
 app.MapPut("/api/categories/status/", CategoryRoutes.ChangeStatus);
@@ -70,6 +71,16 @@ app.MapPost("/api/messages/", MessageRoutes.AddMessage);
 //use after installation of mockdata. 
 app.MapPost("/api/password/mockhash/", MockHasher.HashMockPasswords);
 //app.MapPost("api/password/mockreset/", MockHasher.ResetMockPasswords); deprecated after more mockdata was created. 
+
+//DELETE ROUTES SKAPADE FÖR API TESTNING, I PROJEKTET HAR VI BARA HAFT SOFT-DELETE MED EN BOOLEAN
+
+app.MapDelete("/api/users/{id}", UserRoutes.DeleteUser);
+app.MapDelete("/api/products/{id}", ProductRoutes.DeleteProduct);
+app.MapDelete("/api/tickets/{id}", TicketRoutes.DeleteTicket);
+app.MapDelete("/api/categories/{id}", CategoryRoutes.DeleteCategory);
+app.MapDelete("/api/users/deletecategories/{id}", CategoryRoutes.DeleteCategoryXuser);
+app.MapDelete("/api/companies/{id}", CompanyRoutes.DeleteCompany);
+
 
 
 app.Run();

@@ -27,7 +27,7 @@ public class CategoryRoutes
         }
         catch (Exception ex)
         {
-            return TypedResults.BadRequest("nej de gick inte"+ex.Message);
+            return TypedResults.BadRequest("nej de gick inte" + ex.Message);
         }
 
     }
@@ -150,6 +150,66 @@ public class CategoryRoutes
         }
         return TypedResults.BadRequest("No session available");
     }
+
+
+    public static async Task<Results<Ok<string>, BadRequest<string>>> DeleteCategory(NpgsqlDataSource db, HttpContext ctx, int id)
+    {
+
+        if (ctx.Session.IsAvailable && ctx.Session.GetInt32("role") is int roleInt && Enum.IsDefined(typeof(UserRole), roleInt) && (UserRole)roleInt == UserRole.Admin)
+        {
+
+            try
+            {
+                using var cmd = db.CreateCommand("DELETE FROM ticket_categories WHERE ID = $1");
+                cmd.Parameters.AddWithValue(id);
+
+                int rowsAffected = await cmd.ExecuteNonQueryAsync();
+                if (rowsAffected > 0)
+                {
+                    return TypedResults.Ok($"Category with id {id} is deleted");
+                }
+                else
+                {
+                    return TypedResults.BadRequest("Did not work");
+                }
+            }
+            catch (Exception ex)
+            {
+                return TypedResults.BadRequest(ex.Message);
+            }
+        }
+        return TypedResults.BadRequest("No Session available");
+    }
+
+    public static async Task<Results<Ok<string>, BadRequest<string>>> DeleteCategoryXuser(NpgsqlDataSource db, HttpContext ctx, int id)
+    {
+
+        if (ctx.Session.IsAvailable && ctx.Session.GetInt32("role") is int roleInt && Enum.IsDefined(typeof(UserRole), roleInt) && (UserRole)roleInt == UserRole.Admin)
+        {
+
+            try
+            {
+                using var cmd = db.CreateCommand("DELETE FROM customer_agentsxticket_category WHERE customer_agent = $1");
+                cmd.Parameters.AddWithValue(id);
+
+                int rowsAffected = await cmd.ExecuteNonQueryAsync();
+                if (rowsAffected > 0)
+                {
+                    return TypedResults.Ok($"Category crossTableRows with id {id} is deleted");
+                }
+                else
+                {
+                    return TypedResults.BadRequest("Did not work");
+                }
+            }
+            catch (Exception ex)
+            {
+                return TypedResults.BadRequest(ex.Message);
+            }
+        }
+        return TypedResults.BadRequest("No Session available");
+    }
+
 }
 
 

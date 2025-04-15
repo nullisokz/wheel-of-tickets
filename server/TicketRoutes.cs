@@ -116,11 +116,11 @@ public class TicketRoutes
                 await using var conn = await db.OpenConnectionAsync();
                 await using var transaction = await conn.BeginTransactionAsync();
 
-                using var cmdRandomSelect =  new NpgsqlCommand(@"select id from tickets  join customer_agentsxticket_category as caXtc 
+                using var cmdRandomSelect = new NpgsqlCommand(@"select id from tickets  join customer_agentsxticket_category as caXtc 
               on tickets.ticket_category = caXtc.ticket_category
               where caXtc.customer_agent=$1 and tickets.customer_agent is null 
               order by random() 
-              limit 1;",conn,transaction);
+              limit 1;", conn, transaction);
 
                 cmdRandomSelect.Parameters.AddWithValue(agent);
                 var reader = await cmdRandomSelect.ExecuteReaderAsync();
@@ -135,7 +135,7 @@ public class TicketRoutes
                 }
 
 
-                using var cmd =  new NpgsqlCommand("UPDATE tickets SET customer_agent = $2, status = 2 WHERE id = $1",conn,transaction);
+                using var cmd = new NpgsqlCommand("UPDATE tickets SET customer_agent = $2, status = 2 WHERE id = $1", conn, transaction);
 
                 cmd.Parameters.AddWithValue(id);
                 cmd.Parameters.AddWithValue(agent);
@@ -300,11 +300,13 @@ public class TicketRoutes
     public static async Task<Results<Ok<string>, BadRequest<string>>> ChangeStatus(string slug, statusDTO status, NpgsqlDataSource db)
     {
         try
-        {   int? idNullable = await MessageRoutes.GetIdBySlug(db,slug); 
-            if(!idNullable.HasValue){
+        {
+            int? idNullable = await MessageRoutes.GetIdBySlug(db, slug);
+            if (!idNullable.HasValue)
+            {
                 return TypedResults.BadRequest("failed to get ticket id from slug");
             }
-            int id = idNullable.Value; 
+            int id = idNullable.Value;
             using var cmd = db.CreateCommand(
                 @"UPDATE tickets SET status = $1 WHERE id = $2"
             );
@@ -333,11 +335,12 @@ public class TicketRoutes
             try
             {
 
-                int? idNullable = await MessageRoutes.GetIdBySlug(db,slug); 
-                if(!idNullable.HasValue){
+                int? idNullable = await MessageRoutes.GetIdBySlug(db, slug);
+                if (!idNullable.HasValue)
+                {
                     return TypedResults.BadRequest("failed to get ticket id from slug");
                 }
-                int id = idNullable.Value; 
+                int id = idNullable.Value;
                 using var cmd = db.CreateCommand("UPDATE tickets SET rating=$2 WHERE id=$1 AND status=3 AND rating is null");
 
                 cmd.Parameters.AddWithValue(id);
@@ -366,7 +369,7 @@ public class TicketRoutes
         }
 
     }
-//    public record Ticket(int id, int status, string description, int product_id, int ticket_category, string slug);
+    //    public record Ticket(int id, int status, string description, int product_id, int ticket_category, string slug);
     public static async Task<Results<Ok<List<Ticket>>, BadRequest<string>>> GetClosedTicketsByUserId(NpgsqlDataSource db, HttpContext ctx)
     {
 
@@ -410,7 +413,32 @@ public class TicketRoutes
 
     }
 
+    public static async Task<Results<Ok<string>, BadRequest<string>>> DeleteTicket(NpgsqlDataSource db, HttpContext ctx, int id)
+    {
+
+        try
+        {
+            using var cmd = db.CreateCommand("DELETE FROM ticket WHERE ID = $1");
+            cmd.Parameters.AddWithValue(id);
+
+            int rowsAffected = await cmd.ExecuteNonQueryAsync();
+            if (rowsAffected > 0)
+            {
+                return TypedResults.Ok($"ticket with id {id} is deleted");
+            }
+            else
+            {
+                return TypedResults.BadRequest("Did not work");
+            }
+        }
+        catch (Exception ex)
+        {
+            return TypedResults.BadRequest(ex.Message);
+        }
+    }
 }
+
+
 
 
 

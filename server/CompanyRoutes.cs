@@ -147,7 +147,7 @@ public class CompanyRoutes
 
             if (result != null)
             {
-                return TypedResults.Ok("Det funkade! Du la till ett företag!");
+                return TypedResults.Ok(new { insertId = result });
             }
             else
             {
@@ -218,6 +218,24 @@ public class CompanyRoutes
             return TypedResults.BadRequest($"(Detta är Catch) Det funkade inte: {ex.Message}");
         }
 
+    }
+
+    public static async Task<Results<Ok<string>, BadRequest<string>>> DeleteCompany(int id, NpgsqlDataSource db)
+    {
+
+        using var cmd = db.CreateCommand("DELETE FROM COMPANIES WHERE ID = $1");
+        cmd.Parameters.AddWithValue(id);
+
+        int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+        if (rowsAffected > 0)
+        {
+            return TypedResults.Ok($"It worked, {rowsAffected} companies deleted with {id} is gone");
+        }
+        else
+        {
+            return TypedResults.BadRequest("Did not work.");
+        }
     }
 
 

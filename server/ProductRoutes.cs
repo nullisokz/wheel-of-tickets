@@ -173,7 +173,7 @@ public class ProductRoutes()
 
             if (result != null)
             {
-                return TypedResults.Ok("Det funkade! Du la till en product!");
+                return TypedResults.Ok(new { insertId = result });
             }
             else
             {
@@ -221,5 +221,29 @@ public class ProductRoutes()
             return TypedResults.BadRequest($"ett fel har inträffat: {ex.Message}");
         }
     }
+    public static async Task<Results<Ok<string>, BadRequest<string>>> DeleteProduct(NpgsqlDataSource db, HttpContext ctx, int id)
+    {
 
+        try
+        {
+            using var cmd = db.CreateCommand("DELETE FROM products WHERE ID = $1");
+            cmd.Parameters.AddWithValue(id);
+
+            int rowsAffected = await cmd.ExecuteNonQueryAsync();
+            if (rowsAffected > 0)
+            {
+                return TypedResults.Ok($"product with id {id} is deleted");
+            }
+            else
+            {
+                return TypedResults.BadRequest("Did not work");
+            }
+        }
+        catch (Exception ex)
+        {
+            return TypedResults.BadRequest(ex.Message);
+        }
+    }
 }
+
+
