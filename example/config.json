@@ -1,0 +1,65 @@
+{
+  "example_configuration": {
+    "database": {
+      "name": "swine_sync",
+      "host": "localhost",
+      "port": 5432,
+      "note": "Update the connection string in server/Program.cs"
+    },
+    "email": {
+      "smtp_host": "smtp.gmail.com",
+      "smtp_port": 587,
+      "username": "pig.swinesync@gmail.com",
+      "note": "Email credentials are configured in server/MailService.cs"
+    },
+    "urls": {
+      "api": "http://localhost:5000/api",
+      "frontend": "http://localhost:5173",
+      "tech_solutions_demo": "http://localhost:5173/tech-solutions"
+    },
+    "demo_users": {
+      "super_admin": {
+        "email": "super_gris@mail.com",
+        "password": "kung",
+        "description": "Can manage companies and admin users"
+      },
+      "admin": {
+        "email": "grune@grymt.se",
+        "password": "hejhej",
+        "description": "Can manage products, categories, and support agents for Tech Solutions"
+      },
+      "customer_agent": {
+        "email": "tryne@hotmail.com",
+        "password": "asd123",
+        "description": "Can respond to and manage tickets"
+      }
+    },
+    "demo_companies": [
+      {
+        "id": 1,
+        "name": "Swine Sync",
+        "domain": "swine_sync.com",
+        "description": "CRM software company"
+      },
+      {
+        "id": 2,
+        "name": "Tech Solutions",
+        "domain": "techsolutions.com",
+        "description": "IT services company"
+      },
+      {
+        "id": 3,
+        "name": "Eco Enterprises",
+        "domain": "ecoenterprises.com",
+        "description": "Eco-friendly products"
+      }
+    ],
+    "example_ticket_data": {
+      "productId": 1,
+      "categoryId": 1,
+      "message": "Example message",
+      "email": "customer@example.com",
+      "description": "Example ticket description"
+    }
+  }
+}
