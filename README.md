@@ -1,5 +1,26 @@
 # README
 
+## 🚀 Quick Start Example
+
+For a complete working example with step-by-step instructions, see the **[example/](example/)** directory.
+
+The example includes:
+- Automated setup script
+- Pre-configured demo data
+- API usage examples  
+- Complete workflow demonstration
+- Troubleshooting guide
+
+**Quick setup:**
+```bash
+cd example
+./setup.sh
+```
+
+Then follow the instructions in [example/README.md](example/README.md) for a full demonstration.
+
+---
+
 ## Instructions
 
 ### Set-up:
